@@ -207,16 +207,14 @@ class AnalizadorSuministros:
             produccion_cc = pd.read_excel(producciones, sheet_name=nombre_cortado).iloc[:-1]
             produccion_cc['SIGCOM'] = produccion_cc['SERVICIOS FINALES'].apply(lambda x: DICCIONARIO_PRODUCIONES_SIGCOM[x])
             resumen_porcentajes = produccion_cc.groupby('SIGCOM')["PORCENTAJES"].sum()
-            print(resumen_porcentajes)
 
-            total = formato_relleno.loc[cc_a_desglosar, :]
-            print(total)
+            total = formato_relleno.loc[cc_a_desglosar, :].copy()
             for cc_sigcom, porcentaje_subunidad in resumen_porcentajes.items():
                 print(f"Se esta asignando dinero a {cc_sigcom}, y tiene un porcentaje de {porcentaje_subunidad}")
                 desglose = total * porcentaje_subunidad
                 formato_relleno.loc[cc_sigcom] = desglose
-
-            break
+            
+            print()
 
         return formato_relleno
 
