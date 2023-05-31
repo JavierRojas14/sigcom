@@ -209,10 +209,15 @@ class AnalizadorSuministros:
             resumen_porcentajes = produccion_cc.groupby('SIGCOM')["PORCENTAJES"].sum()
 
             total = formato_relleno.loc[cc_a_desglosar, :].copy()
-            for cc_sigcom, porcentaje_subunidad in resumen_porcentajes.items():
-                print(f"Se esta asignando dinero a {cc_sigcom}, y tiene un porcentaje de {porcentaje_subunidad}")
+            for cc_subunidad, porcentaje_subunidad in resumen_porcentajes.items():
+                print(f"Se esta asignando dinero a {cc_subunidad}, y tiene un porcentaje de {porcentaje_subunidad}")
                 desglose = total * porcentaje_subunidad
-                formato_relleno.loc[cc_sigcom] = desglose
+
+                if cc_subunidad != cc_a_desglosar:
+                    dinero_previo = formato_relleno.loc[cc_subunidad]
+                    desglose = desglose.add(dinero_previo, fill_value=0)
+
+                formato_relleno.loc[cc_subunidad] = desglose
             
             print()
 
