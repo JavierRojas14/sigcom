@@ -49,11 +49,11 @@ class AnalizadorSuministros:
         df_completa = self.rellenar_destinos(df_cartola)
         formato_relleno = self.convertir_a_tabla_din_y_rellenar_formato(df_completa)
 
-        formato_desglosado = self.desglosar_por_produccion(formato_relleno)
+        formato_desglosado = self.desglosar_por_produccion(formato_relleno.copy())
 
         self.guardar_archivos(
-            formato_relleno=formato_relleno,
             formato_desglosado=formato_desglosado,
+            formato_relleno=formato_relleno,
             df_completa=df_completa,
         )
 
