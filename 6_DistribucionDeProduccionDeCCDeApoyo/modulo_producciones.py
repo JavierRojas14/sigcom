@@ -7,7 +7,7 @@ import json
 
 import pandas as pd
 
-from constantes import (
+from constantes_produccion import (
     DICCIONARIO_UNIDADES_A_DESGLOSAR,
     PORCENTAJES_A_CONSULTAS_ONCOLOGIA,
     PORCENTAJES_A_PROCEDIMIENTOS_ONCOLOGIA,
@@ -256,6 +256,6 @@ class ModuloProducciones:
                 writer, sheet_name="PORCENTAJES_HOSP", index=False
             )
 
-
-modulo_producciones = ModuloProducciones()
-modulo_producciones.correr_programa()
+if __name__ == "__main__":
+    modulo_producciones = ModuloProducciones()
+    modulo_producciones.correr_programa()
