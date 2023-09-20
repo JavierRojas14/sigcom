@@ -49,11 +49,11 @@ class AnalizadorSuministros:
         df_completa = self.rellenar_destinos(df_cartola)
         formato_relleno = self.convertir_a_tabla_din_y_rellenar_formato(df_completa)
 
-        formato_desglosado = self.desglosar_por_produccion(formato_relleno)
+        formato_desglosado = self.desglosar_por_produccion(formato_relleno.copy())
 
         self.guardar_archivos(
-            formato_relleno=formato_relleno,
             formato_desglosado=formato_desglosado,
+            formato_relleno=formato_relleno,
             df_completa=df_completa,
         )
 
@@ -207,16 +207,19 @@ class AnalizadorSuministros:
             produccion_cc = pd.read_excel(producciones, sheet_name=nombre_cortado).iloc[:-1]
             produccion_cc['SIGCOM'] = produccion_cc['SERVICIOS FINALES'].apply(lambda x: DICCIONARIO_PRODUCIONES_SIGCOM[x])
             resumen_porcentajes = produccion_cc.groupby('SIGCOM')["PORCENTAJES"].sum()
-            print(resumen_porcentajes)
 
-            total = formato_relleno.loc[cc_a_desglosar, :]
-            print(total)
-            for cc_sigcom, porcentaje_subunidad in resumen_porcentajes.items():
-                print(f"Se esta asignando dinero a {cc_sigcom}, y tiene un porcentaje de {porcentaje_subunidad}")
+            total = formato_relleno.loc[cc_a_desglosar, :].copy()
+            for cc_subunidad, porcentaje_subunidad in resumen_porcentajes.items():
+                print(f"Se esta asignando dinero a {cc_subunidad}, y tiene un porcentaje de {porcentaje_subunidad}")
                 desglose = total * porcentaje_subunidad
-                formato_relleno.loc[cc_sigcom] = desglose
 
-            break
+                if cc_subunidad != cc_a_desglosar:
+                    dinero_previo = formato_relleno.loc[cc_subunidad]
+                    desglose = desglose.add(dinero_previo, fill_value=0)
+
+                formato_relleno.loc[cc_subunidad] = desglose
+            
+            print()
 
         return formato_relleno
 
